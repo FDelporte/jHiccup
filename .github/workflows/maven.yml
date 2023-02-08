@@ -46,7 +46,7 @@ jobs:
 
   assemble:
     needs: [ precheck ]
-    uses: fdelporte/jHiccup/.github/workflows/reusable-assemble.yml@main
+    uses: FDelporte/jHiccup/.github/workflows/reusable-assemble.yml@main
     with:
       project-version: ${{ needs.precheck.outputs.VERSION }}
 
