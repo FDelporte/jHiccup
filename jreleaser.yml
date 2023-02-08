@@ -2,7 +2,7 @@ environment:
   properties:
     jdkPathPrefix: 'target/jdks'
     jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
-    artifactsDir: out/jreleaser/assemble/helloworld/jpackage
+    artifactsDir: out/jreleaser/assemble/jHiccup/jpackage
 
 project:
   name: jHiccup
@@ -41,7 +41,7 @@ assemble:
         path: target/{{distributionName}}-{{projectVersion}}.jar
 
   jlink:
-    helloworld-jink:
+    jHiccup-jlink:
       active: ALWAYS
       exported: false
       imageName: 'jHiccup-{{projectVersion}}'
@@ -56,9 +56,9 @@ assemble:
         path: 'target/jHiccup-{{projectVersion}}.jar'
 
   jpackage:
-    helloworld:
+    jHiccup:
       active: ALWAYS
-      jlink: jHiccup-jink
+      jlink: jHiccup-jlink
       attachPlatform: true
       exported: false
       applicationPackage:
@@ -66,15 +66,15 @@ assemble:
         appVersion: '{{projectVersionNumber}}'
         vendor: JReleaser
       osx:
-        types: [pkg]
+        types: [ pkg ]
         appName: jHiccup
         packageName: jHiccup
         packageIdentifier: org.jhiccup.HiccupMeter
       linux:
-        types: [deb,rpm]
+        types: [ deb,rpm ]
         maintainer: jreleaser@kordamp.org
       windows:
-        types: [msi]
+        types: [ msi ]
         console: true
         dirChooser: true
 
