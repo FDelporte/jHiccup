@@ -44,10 +44,10 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Setup JDKs
-        run: ./mvnw -ntp -B -q --file pom.xml -Pjdks
+        run: mvn -ntp -B -q --file pom.xml -Pjdks
 
       - name: Build
-        run: ./mvnw -ntp -B --file pom.xml verify
+        run: mvn -ntp -B --file pom.xml verify
 
       - name: Assemble
         uses: jreleaser/release-action@v2
