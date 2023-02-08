@@ -2,6 +2,10 @@ name: Java CI
 
 on: [push, pull_request]
 
+env:
+  JAVA_VERSION: '19'
+  JAVA_DISTRO: 'zulu'
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
