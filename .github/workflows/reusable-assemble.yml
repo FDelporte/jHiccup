@@ -54,7 +54,7 @@ jobs:
 
       - name: List output
         run: |
-          ls -laR out/
+          ls -laR target/
 
       - name: Assemble
         uses: jreleaser/release-action@v2
