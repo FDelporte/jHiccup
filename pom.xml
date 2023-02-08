@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jhiccup</groupId>
@@ -40,8 +41,8 @@
         <url>scm:git:git://github.com/giltene/jHiccup.git</url>
         <connection>scm:git:git://github.com/giltene/jHiccup.git</connection>
         <developerConnection>scm:git:git@github.com:giltene/jHiccup.git</developerConnection>
-      <tag>jHiccup-2.0.10</tag>
-  </scm>
+        <tag>jHiccup-2.0.10</tag>
+    </scm>
 
     <issueManagement>
         <url>https://github.com/giltene/jHiccup/issues</url>
@@ -54,6 +55,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.template.file>src/main/java/org/jhiccup/Version.java.template</version.template.file>
         <version.file>src/main/java/org/jhiccup/Version.java</version.file>
+        <java.version>17</java.version>
+        <jdk.version>17.0.2</jdk.version>
     </properties>
 
     <build>
@@ -257,9 +260,39 @@
                     <systemPath>${java.home}/../lib/tools.jar</systemPath>
                 </dependency>
             </dependencies>
+        </profile>
 
+        <profile>
+            <id>jdks</id>
+            <build>
+                <defaultGoal>jdks:setup-disco</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jreleaser</groupId>
+                        <artifactId>jdks-maven-plugin</artifactId>
+                        <version>1.4.0</version>
+                        <configuration>
+                            <pkgs>
+                                <pkg>
+                                    <name>zulu17LinuxIntel</name>
+                                    <platform>linux-x86_64</platform>
+                                    <version>${jdk.version}</version>
+                                </pkg>
+                                <pkg>
+                                    <name>zulu17OsxIntel</name>
+                                    <platform>osx-x86_64</platform>
+                                    <version>${jdk.version}</version>
+                                </pkg>
+                                <pkg>
+                                    <name>zulu17WindowsIntel</name>
+                                    <platform>windows-x86_64</platform>
+                                    <version>${jdk.version}</version>
+                                </pkg>
+                            </pkgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
-    
-  </project>
-
+</project>
