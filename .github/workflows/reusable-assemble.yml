@@ -43,6 +43,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
+      - name: Enable Maven wrapper
+        run: chmod +x mvnw
+
       - name: Setup JDKs
         run: ./mvnw -ntp -B -q --file pom.xml -Pjdks
 
