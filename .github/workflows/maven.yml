@@ -1,12 +1,6 @@
 name: Java CI
 
-# on: [push, pull_request]
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version'
-        required: true
+on: [push, pull_request]
 
 jobs:
   test:
@@ -30,34 +24,13 @@ jobs:
       #- name: Test with Maven
       #  run: mvn test -B --file pom.xml
 
-  precheck:
-    name: Precheck
-    runs-on: ubuntu-latest
-    outputs:
-      VERSION: ${{ steps.vars.outputs.VERSION }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Version
-        id: vars
-        shell: bash
-        run: |
-          VERSION=${{ github.event.inputs.version }}
-          mvn -B versions:set versions:commit -DnewVersion=$VERSION 
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing version $VERSION"
-          git push origin main
-
   assemble:
-    needs: [ precheck ]
     uses: FDelporte/jHiccup/.github/workflows/reusable-assemble.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.VERSION }}
+      project-version: TEST
 
   build:
-    needs: [ precheck, assemble ]
+    needs: [ assemble ]
     runs-on: ubuntu-latest
 
     steps:
