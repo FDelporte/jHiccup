@@ -24,13 +24,34 @@ jobs:
       - name: Test with Maven
         run: mvn test -B --file pom.xml
 
+  precheck:
+    name: Precheck
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.vars.outputs.VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Version
+        id: vars
+        shell: bash
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          ./mvnw -B versions:set versions:commit -DnewVersion=$VERSION
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Action"
+          git commit -a -m "Releasing version $VERSION"
+          git push origin main
+
   assemble:
     needs: [ precheck ]
-    uses: jreleaser/helloworld-java-jpackage/.github/workflows/reusable-assemble.yml@main
+    uses: fdelporte/jHiccup/.github/workflows/reusable-assemble.yml@main
     with:
       project-version: ${{ needs.precheck.outputs.VERSION }}
 
   build:
+    needs: [ precheck, assemble ]
     runs-on: ubuntu-latest
 
     steps:
