@@ -31,7 +31,7 @@ release:
 
 assemble:
   javaArchive:
-    helloworld:
+    jHiccup:
       active: ALWAYS
       formats: [ ZIP ]
       fileSets:
@@ -79,7 +79,7 @@ assemble:
         dirChooser: true
 
 distributions:
-  helloworld:
+  jHiccup:
     type: NATIVE_PACKAGE
     artifacts:
       - path: '{{artifactsDir}}/jHiccup-{{projectVersionNumber}}-osx-x86_64.pkg'
