@@ -1,6 +1,6 @@
 name: Java CI
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 env:
   JAVA_VERSION: '19'
@@ -12,9 +12,9 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-18.04, macOS-latest, windows-2016]
+        os: [ ubuntu-18.04, macOS-latest, windows-2016 ]
         # test on both latest and specific update of each major version:
-        java: [7, 7.0.181, 8, 8.0.192, 9, 10, 11, 11.0.3, 12, 13, 13.0.4, 14, 15, 16, 17, 18, 19]
+        java: [ 7, 7.0.181, 8, 8.0.192, 9, 10, 11, 11.0.3, 12, 13, 13.0.4, 14, 15, 16, 17, 18, 19 ]
       fail-fast: false
       max-parallel: 5
     name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
@@ -31,7 +31,8 @@ jobs:
   assemble:
     uses: FDelporte/jHiccup/.github/workflows/reusable-assemble.yml@main
     with:
-      project-version: TEST
+      project-version: 9.9.99
+      # TODO Version should be set from argument...
 
   build:
     needs: [ assemble ]
