@@ -1,3 +1,9 @@
+environment:
+  properties:
+    jdkPathPrefix: 'target/jdks'
+    jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
+    artifactsDir: out/jreleaser/assemble/helloworld/jpackage
+
 project:
   name: jHiccup
   description: Tool that logs "hiccups"
@@ -33,3 +39,54 @@ assemble:
           includes: [ 'LICENSE' ]
       mainJar:
         path: target/{{distributionName}}-{{projectVersion}}.jar
+
+  jlink:
+    helloworld-jink:
+      active: ALWAYS
+      exported: false
+      imageName: 'jHiccup-{{projectVersion}}'
+      targetJdks:
+        - path: '{{jdkPathPrefix}}/zulu17OsxIntel/{{jdkFilePrefix}}-macosx_x64/zulu-17.jdk/Contents/Home'
+          platform: 'osx-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu17LinuxIntel/{{jdkFilePrefix}}-linux_x64'
+          platform: 'linux-x86_64'
+        - path: '{{jdkPathPrefix}}/zulu17WindowsIntel/{{jdkFilePrefix}}-win_x64'
+          platform: 'windows-x86_64'
+      mainJar:
+        path: 'target/jHiccup-{{projectVersion}}.jar'
+
+  jpackage:
+    helloworld:
+      active: ALWAYS
+      jlink: jHiccup-jink
+      attachPlatform: true
+      exported: false
+      applicationPackage:
+        appName: jHiccup
+        appVersion: '{{projectVersionNumber}}'
+        vendor: JReleaser
+      osx:
+        types: [pkg]
+        appName: jHiccup
+        packageName: jHiccup
+        packageIdentifier: org.jhiccup.HiccupMeter
+      linux:
+        types: [deb,rpm]
+        maintainer: jreleaser@kordamp.org
+      windows:
+        types: [msi]
+        console: true
+        dirChooser: true
+
+distributions:
+  helloworld:
+    type: NATIVE_PACKAGE
+    artifacts:
+      - path: '{{artifactsDir}}/jHiccup-{{projectVersionNumber}}-osx-x86_64.pkg'
+        platform: 'osx-x86_64'
+      - path: '{{artifactsDir}}/{{distributionName}}_{{projectVersionNumber}}-1_amd64.deb'
+        platform: 'linux-x86_64'
+      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersionNumber}}-1.x86_64.rpm'
+        platform: 'linux-x86_64'
+      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersionNumber}}-windows-x86_64.msi'
+        platform: 'windows-x86_64'

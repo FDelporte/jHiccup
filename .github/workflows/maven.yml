@@ -24,6 +24,12 @@ jobs:
       - name: Test with Maven
         run: mvn test -B --file pom.xml
 
+  assemble:
+    needs: [ precheck ]
+    uses: jreleaser/helloworld-java-jpackage/.github/workflows/reusable-assemble.yml@main
+    with:
+      project-version: ${{ needs.precheck.outputs.VERSION }}
+
   build:
     runs-on: ubuntu-latest
 
