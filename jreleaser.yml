@@ -1,0 +1,35 @@
+project:
+  name: jHiccup
+  description: Tool that logs "hiccups"
+  longDescription: jHiccup is a lightweight, non-intrusive instrumentation tool that logs and records platform "hiccups"
+  links:
+    homepage: https://github.com/giltene/jHiccup
+  authors:
+    - Gil Tene
+  license: BSD-2
+  inceptionYear: 2013
+  stereotype: cli
+  java:
+    groupId: org.jhiccup
+    artifactId: jHiccup
+    mainClass: org.jhiccup.HiccupMeter
+
+release:
+  github:
+    overwrite: true
+    changelog:
+      formatted: ALWAYS
+      preset: conventional-commits
+      contributors:
+        format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
+
+assemble:
+  javaArchive:
+    helloworld:
+      active: ALWAYS
+      formats: [ ZIP ]
+      fileSets:
+        - input: '.'
+          includes: [ 'LICENSE' ]
+      mainJar:
+        path: target/{{distributionName}}-{{projectVersion}}.jar
