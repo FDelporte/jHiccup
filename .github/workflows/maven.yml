@@ -31,7 +31,7 @@ jobs:
   assemble:
     uses: FDelporte/jHiccup/.github/workflows/reusable-assemble.yml@main
     with:
-      project-version: 9.9.99
+      project-version: 2.0.11-SNAPSHOT
       # TODO Version should be set from argument...
 
   build:
