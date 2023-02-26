@@ -7,9 +7,47 @@ env:
   JAVA_DISTRO: 'zulu'
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
+  precheck:
+    if: startsWith(github.event.head_commit.message, 'Releasing version') != true
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.vars.outputs.VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
+      - name: Cancel previous run
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+
+      - name: Cache Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Enable Maven wrapper
+        run: chmod +x mvnw
+
+      - name: Version
+        id: vars
+        shell: bash
+        run: |
+          version=$(./mvnw -ntp -B help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$(echo $version)" >> $GITHUB_OUTPUT
+
+  test:
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ ubuntu-18.04, macOS-latest, windows-2016 ]
@@ -17,42 +55,61 @@ jobs:
         java: [ 7, 7.0.181, 8, 8.0.192, 9, 10, 11, 11.0.3, 12, 13, 13.0.4, 14, 15, 16, 17, 18, 19 ]
       fail-fast: false
       max-parallel: 5
-    name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
 
+    name: Test JDK ${{ matrix.java }}, ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v1
-      - name: Set up JDK
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }}
-      #- name: Test with Maven
-      #  run: mvn test -B --file pom.xml
+          java-distro: ${{ env.JAVA_DISTRO }}
+
+      - name: Cache Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Enable Maven wrapper
+        run: chmod +x mvnw
+
+      - name: Test
+        run: ./mvnw -ntp -B --file pom.xml test
 
   assemble:
+    needs: [ precheck, test ]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     uses: FDelporte/jHiccup/.github/workflows/reusable-assemble.yml@main
     with:
-      project-version: 2.0.11-SNAPSHOT
-      # TODO Version should be set from argument...
+      project-version: ${{ needs.precheck.outputs.VERSION }}
 
-  build:
-    needs: [ assemble ]
+  release:
+    needs: [ precheck, assemble ]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v3
         with:
-          java-version: 1.8
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          java-distro: ${{ env.JAVA_DISTRO }}
+
+      - name: Enable Maven wrapper
+        run: chmod +x mvnw
 
       - name: Build with Maven
-        run: mvn package -B --file pom.xml
+        run: ./mvnw -ntp -B --file pom.xml package
 
       - name: Assemble
         uses: jreleaser/release-action@v2
         with:
-          arguments: assemble
+          arguments: assemble --assembler java-archive
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
