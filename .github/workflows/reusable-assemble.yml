@@ -65,7 +65,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: jreleaser-release
+          name: jreleaser-release-${{ matrix.os }}
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
