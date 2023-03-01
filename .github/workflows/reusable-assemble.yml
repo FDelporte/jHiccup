@@ -52,10 +52,6 @@ jobs:
       - name: Build
         run: ./mvnw -ntp -B --file pom.xml verify
 
-      - name: List output
-        run: |
-          ls -la target/
-
       - name: Assemble
         uses: jreleaser/release-action@v2
         with:
