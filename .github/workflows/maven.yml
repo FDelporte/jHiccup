@@ -64,7 +64,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }}
-          java-distro: ${{ env.JAVA_DISTRO }}
+          distribution: ${{ env.JAVA_DISTRO }}
 
       - name: Cache Maven
         uses: actions/cache@v3
