@@ -2,7 +2,6 @@ environment:
   properties:
     jdkPathPrefix: 'target/jdks'
     jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
-    artifactsDir: out/jreleaser/assemble/jHiccup/jpackage
 
 project:
   name: jHiccup
@@ -14,7 +13,7 @@ project:
     - Gil Tene
   license: BSD-2
   inceptionYear: 2013
-  stereotype: cli
+  stereotype: CLI
   java:
     groupId: org.jhiccup
     artifactId: jHiccup
@@ -31,62 +30,63 @@ release:
 
 assemble:
   javaArchive:
-    jHiccup:
+    jHiccup-archive:
       active: ALWAYS
+      archiveName: 'jHiccup-{{projectVersion}}'
       formats: [ ZIP ]
+      executable:
+        name: jHiccup
+      templateDirectory: src/jreleaser/assemblers/jHiccup/shared
+      skipTemplates:
+        - bin/launcher.bat.tpl
       fileSets:
         - input: '.'
-          includes: [ 'LICENSE' ]
+          includes:
+            - COPYING.txt
+            - LICENSE.txt
+            - README.md
+            - jHiccupPlotter.xls
+            - pom.xml
+        - input: src
+          output: src
+          excludes:
+            - '**/*.tpl'
       mainJar:
-        path: target/{{distributionName}}-{{projectVersion}}.jar
+        path: target/jHiccup.jar
 
   jlink:
     jHiccup-jlink:
       active: ALWAYS
       exported: false
       imageName: 'jHiccup-{{projectVersion}}'
+      executable: jHiccup
+      templateDirectory: src/jreleaser/assemblers/jHiccup/shared
+      skipTemplates:
+        - bin/launcher.bat.tpl
       targetJdks:
         - path: '{{jdkPathPrefix}}/zulu17OsxIntel/{{jdkFilePrefix}}-macosx_x64/zulu-17.jdk/Contents/Home'
           platform: 'osx-x86_64'
         - path: '{{jdkPathPrefix}}/zulu17LinuxIntel/{{jdkFilePrefix}}-linux_x64'
           platform: 'linux-x86_64'
-        - path: '{{jdkPathPrefix}}/zulu17WindowsIntel/{{jdkFilePrefix}}-win_x64'
-          platform: 'windows-x86_64'
       mainJar:
-        path: 'target/jHiccup-{{projectVersion}}.jar'
+        path: 'target/jHiccup.jar'
 
   jpackage:
-    jHiccup:
+    jHiccup-installer:
       active: ALWAYS
       jlink: jHiccup-jlink
       attachPlatform: true
-      exported: false
+      exported: true
       applicationPackage:
         appName: jHiccup
         appVersion: '{{projectVersionNumber}}'
-        vendor: JReleaser
+        vendor: Azul
       osx:
         types: [ pkg ]
         appName: jHiccup
         packageName: jHiccup
         packageIdentifier: org.jhiccup.HiccupMeter
       linux:
-        types: [ deb,rpm ]
-        maintainer: jreleaser@kordamp.org
-      windows:
-        types: [ msi ]
-        console: true
-        dirChooser: true
-
-distributions:
-  jHiccup:
-    type: NATIVE_PACKAGE
-    artifacts:
-      - path: '{{artifactsDir}}/jHiccup-{{projectVersionNumber}}-osx-x86_64.pkg'
-        platform: 'osx-x86_64'
-      - path: '{{artifactsDir}}/{{distributionName}}_{{projectVersionNumber}}-1_amd64.deb'
-        platform: 'linux-x86_64'
-      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersionNumber}}-1.x86_64.rpm'
-        platform: 'linux-x86_64'
-      - path: '{{artifactsDir}}/{{distributionName}}-{{projectVersionNumber}}-windows-x86_64.msi'
-        platform: 'windows-x86_64'
+        packageName: jHiccup
+        types: [ deb, rpm ]
+        maintainer: gil@cloud7.com
