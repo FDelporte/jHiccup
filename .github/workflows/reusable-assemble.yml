@@ -65,16 +65,18 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: jreleaser-release-${{ matrix.os }}
+          name: jreleaser-logs-${{ matrix.os }}
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
-      - name: Upload jpackage
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           retention-days: 1
+          name: artifacts-${{ matrix.os }}
           path: |
+            target/*.jar
             out/jreleaser/assemble/jHiccup-installer/jpackage/*.pkg
             out/jreleaser/assemble/jHiccup-installer/jpackage/*.msi
             out/jreleaser/assemble/jHiccup-installer/jpackage/*.deb
