@@ -75,7 +75,7 @@ jobs:
         with:
           retention-days: 1
           path: |
-            out/jreleaser/assemble/jHiccup-jlink/jpackage/*.pkg
-            out/jreleaser/assemble/jHiccup-jlink/jpackage/*.msi
-            out/jreleaser/assemble/jHiccup-jlink/jpackage/*.deb
-            out/jreleaser/assemble/jHiccup-jlink/jpackage/*.rpm
+            out/jreleaser/assemble/jHiccup-installer/jpackage/*.pkg
+            out/jreleaser/assemble/jHiccup-installer/jpackage/*.msi
+            out/jreleaser/assemble/jHiccup-installer/jpackage/*.deb
+            out/jreleaser/assemble/jHiccup-installer/jpackage/*.rpm
