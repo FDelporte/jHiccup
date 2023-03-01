@@ -70,14 +70,21 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
-      - name: Upload artifacts
+      - name: Upload executable artifacts
         uses: actions/upload-artifact@v3
         with:
           retention-days: 1
-          name: artifacts-${{ matrix.os }}
+          name: executables-${{ matrix.os }}
           path: |
-            target/*.jar
             out/jreleaser/assemble/jHiccup-installer/jpackage/*.pkg
             out/jreleaser/assemble/jHiccup-installer/jpackage/*.msi
             out/jreleaser/assemble/jHiccup-installer/jpackage/*.deb
             out/jreleaser/assemble/jHiccup-installer/jpackage/*.rpm
+
+      - name: Upload jar artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: jars
+          path: |
+            target/*.jar
