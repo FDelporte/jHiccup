@@ -5,7 +5,7 @@ environment:
 
 project:
   name: jHiccup
-  description: Tool that logs "hiccups"
+  description: Tool that logs hiccups
   longDescription: jHiccup is a lightweight, non-intrusive instrumentation tool that logs and records platform "hiccups"
   links:
     homepage: https://github.com/giltene/jHiccup
